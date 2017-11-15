@@ -4,7 +4,7 @@ module Getui
     def initialize(body, title: "", payload: nil)
       @body = body
       @title = title
-      @auto_badge = "+1"
+      @auto_badge = "1"
       @payload = payload
       @sound = "default"
     end

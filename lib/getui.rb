@@ -28,7 +28,7 @@ module Getui
       resp = Getui::Request.request("https://restapi.getui.com/v1/#{Getui.app_id}/save_list_body", json)
       res = JSON.parse(resp.body)
       raise Getui::PushError.new("#{resp.body}") unless res["result"] == "ok"
-      return res
+      return res["taskid"]
     end
 
     def push_list(cids, taskid, need_detail = true)

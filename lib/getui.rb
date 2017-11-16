@@ -50,9 +50,9 @@ module Getui
 
     def cache_backend
       if defined? Rails
-        self.cache_backend = Rails.cache
+        self.cache_backend ||= Rails.cache
       else
-        self.cache_backend = ActiveSupport::Cache::MemoryStore.new
+        self.cache_backend ||= ActiveSupport::Cache::MemoryStore.new
       end
     end
   end

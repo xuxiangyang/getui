@@ -47,11 +47,13 @@ module Getui
       raise Getui::PushError.new("#{resp.body}") unless res["result"] == "ok"
       res
     end
-  end
 
-  if defined? Rails
-    self.cache_backend = Rails.cache
-  else
-    self.cache_backend = ActiveSupport::Cache::MemoryStore.new
+    def cache_backend
+      if defined? Rails
+        self.cache_backend = Rails.cache
+      else
+        self.cache_backend = ActiveSupport::Cache::MemoryStore.new
+      end
+    end
   end
 end

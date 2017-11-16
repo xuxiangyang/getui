@@ -1,16 +1,24 @@
 require 'uri'
 require 'net/http'
 require 'securerandom'
+
 module Getui
   class Request < Net::HTTPRequest
-    METHOD = 'POST'
     REQUEST_HAS_BODY = true
     RESPONSE_HAS_BODY = true
 
-    def self.request(url, params = {})
+    def self.post(url, params = {})
       uri = URI(url)
-      req = Getui::Request.new(uri)
+      req = Getui::PostRequest.new(uri)
       req.body = JSON.dump(params)
+      http  = Net::HTTP.new(uri.hostname, uri.port)
+      http.use_ssl = (uri.scheme == "https")
+      http.request(req)
+    end
+
+    def self.get(url, params = {})
+      uri = URI(url)
+      req = Getui::GetRequest.new(uri)
       http  = Net::HTTP.new(uri.hostname, uri.port)
       http.use_ssl = (uri.scheme == "https")
       http.request(req)
@@ -25,5 +33,19 @@ module Getui
     def capitalize(name)
       name
     end
+  end
+end
+
+
+module Getui
+  class PostRequest < Getui::Request
+    METHOD = 'POST'
+  end
+end
+
+
+module Getui
+  class GetRequest < Getui::Request
+    METHOD = 'GET'
   end
 end

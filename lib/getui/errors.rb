@@ -1,4 +1,4 @@
 module Getui
-  class GenerateAuthTokenError < Exception; end
-  class PushError < Exception; end
+  class GenerateAuthTokenError < StandardError; end
+  class PushError < StandardError; end
 end

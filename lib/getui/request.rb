@@ -6,6 +6,7 @@ module Getui
   class Request < Net::HTTPRequest
     REQUEST_HAS_BODY = true
     RESPONSE_HAS_BODY = true
+    MAX_TRY = 3
 
     def self.post(url, params = {})
       uri = URI(url)
@@ -13,7 +14,15 @@ module Getui
       req.body = JSON.dump(params)
       http  = Net::HTTP.new(uri.hostname, uri.port)
       http.use_ssl = (uri.scheme == "https")
-      http.request(req)
+      MAX_TRY.times do |current_try|
+        begin
+          return http.request(req)
+        rescue Errno::ETIMEDOUT, Net::ReadTimeout, Timeout::Error, EOFError => e
+          if current_try == MAX_TRY - 1
+            raise e
+          end
+        end
+      end
     end
 
     def self.get(url, params = {})
@@ -21,7 +30,15 @@ module Getui
       req = Getui::GetRequest.new(uri)
       http  = Net::HTTP.new(uri.hostname, uri.port)
       http.use_ssl = (uri.scheme == "https")
-      http.request(req)
+      MAX_TRY.times do |current_try|
+        begin
+          return http.request(req)
+        rescue Errno::ETIMEDOUT, Net::ReadTimeout, Timeout::Error, EOFError => e
+          if current_try == MAX_TRY - 1
+            raise e
+          end
+        end
+      end
     end
 
     def initialize(path)

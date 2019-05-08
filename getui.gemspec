@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
 
-  spec.add_dependency "rest-client", "~> 1.8"
+  spec.add_dependency "rest-client", "> 1.0"
   spec.add_dependency "activesupport", "~> 5.0"
   spec.add_development_dependency "pry", "~> 0"
   spec.add_development_dependency "bundler", "~> 1.15"

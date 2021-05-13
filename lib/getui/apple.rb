@@ -1,6 +1,7 @@
 module Getui
   class Apns
     attr_accessor :auto_badge, :body, :sound, :payload, :title
+
     def initialize(body, title: "", payload: nil)
       @body = body
       @title = title
@@ -11,15 +12,15 @@ module Getui
 
     def as_json
       {
-       aps: {
-             alert: {
-                     body: self.body,
-                     title: self.title,
-                    },
-             autoBadge: self.auto_badge,
-             sound: self.sound,
-            },
-       payload: payload,
+        aps: {
+          alert: {
+            body: self.body,
+            title: self.title,
+          },
+          autoBadge: self.auto_badge,
+          sound: self.sound,
+        },
+        payload: payload,
       }
     end
   end

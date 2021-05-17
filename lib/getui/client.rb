@@ -25,7 +25,7 @@ module Getui
       if res['result'] == 'ok'
         res
       else
-        raise Getui::PushError resp.body
+        raise Getui::PushError, resp.body
       end
     end
 
@@ -36,7 +36,7 @@ module Getui
       if res['result'] == 'ok'
         res["taskid"]
       else
-        raise Getui::PushError resp.body
+        raise Getui::PushError, resp.body
       end
     end
 
@@ -47,7 +47,7 @@ module Getui
       if res['result'] == 'ok'
         res
       else
-        raise Getui::PushError resp.body
+        raise Getui::PushError, resp.body
       end
     end
 
@@ -58,7 +58,7 @@ module Getui
       if res['result'] == 'ok'
         res
       else
-        raise Getui::PushError resp.body
+        raise Getui::PushError, resp.body
       end
     end
 

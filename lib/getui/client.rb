@@ -83,7 +83,7 @@ module Getui
         http = Net::HTTP.new(uri.hostname, uri.port)
         http.use_ssl = (uri.scheme == "https")
         resp = http.request(req)
-        res = JSON.parse(resp)
+        res = JSON.parse(resp.body)
         if res["result"] == "ok"
           res["auth_token"]
         else

@@ -67,29 +67,41 @@ module Getui
       JSON.parse(resp.body)
     end
 
+    def regenerate_auth_token!
+      Getui.cache_backend.write(_auth_token_cache_key, _auth_token, expires_in: 23.hours, race_condition_ttl: 1.minutes)
+    end
+
     private
 
     def auth_token
-      Getui.cache_backend.fetch("Getui:#{app_id}:auth_token", expires_in: 12.hours, race_condition_ttl: 1.minutes) do
-        timestamp = (Time.now.to_f * 1000).to_i
-        body = {
-          timestamp: timestamp.to_s,
-          sign: Digest::SHA256.new.hexdigest("#{app_key}#{timestamp}#{master_secret}"),
-          appkey: app_key,
-        }
-        uri = URI("https://restapi.getui.com/v1/#{app_id}/auth_sign")
-        req = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
-        req.body = JSON.dump(body)
-        http = Net::HTTP.new(uri.hostname, uri.port)
-        http.use_ssl = (uri.scheme == "https")
-        resp = http.request(req)
-        res = JSON.parse(resp.body)
-        if res["result"] == "ok"
-          res["auth_token"]
-        else
-          raise Getui::GenerateAuthTokenError, resp.body
-        end
+      Getui.cache_backend.fetch(_auth_token_cache_key, expires_in: 23.hours, race_condition_ttl: 1.minutes) do
+        _auth_token
       end
+    end
+
+    def _auth_token
+      timestamp = (Time.now.to_f * 1000).to_i
+      body = {
+        timestamp: timestamp.to_s,
+        sign: Digest::SHA256.new.hexdigest("#{app_key}#{timestamp}#{master_secret}"),
+        appkey: app_key,
+      }
+      uri = URI("https://restapi.getui.com/v1/#{app_id}/auth_sign")
+      req = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
+      req.body = JSON.dump(body)
+      http = Net::HTTP.new(uri.hostname, uri.port)
+      http.use_ssl = (uri.scheme == "https")
+      resp = http.request(req)
+      res = JSON.parse(resp.body)
+      if res["result"] == "ok"
+        res["auth_token"]
+      else
+        raise Getui::GenerateAuthTokenError, resp.body
+      end
+    end
+
+    def _auth_token_cache_key
+      "Getui:#{app_id}:auth_token"
     end
 
     def post(url, params = {})
